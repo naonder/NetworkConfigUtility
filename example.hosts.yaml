@@ -1,0 +1,6 @@
+---
+test-device:
+    hostname: test-device.example.com
+    port: 22
+    groups:
+        - devices_ios

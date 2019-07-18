@@ -1,0 +1,5 @@
+---
+devices_ios:
+    platform: ios
+devices_nxos:
+    platform: nxos
