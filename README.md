@@ -8,10 +8,10 @@ https://github.com/nornir-automation/nornir
 ## Source Code
 https://github.com/naonder/NetworkConfigUtility
 
-##PyPI package
+## PyPI package
 https://pypi.org/project/networkconfigutility
 
-##Setup
+## Setup
     pip install networkconfigutility
     
 See sample hosts, groups, and defaults file for reference. Also see the following for more information on Nornir and
@@ -25,7 +25,7 @@ Lastly - this requires that ntc-templates are downloaded to the host running thi
 
 https://github.com/networktocode/ntc-templates
 
-##ntc-templates
+## ntc-templates
 Easiest method is to download and keep the ntc-templates in the home directory of the user running this program.
 
     git clone https://github.com/networktocode/ntc-templates
@@ -38,7 +38,7 @@ More information is here:
 
 https://pynet.twb-tech.com/blog/automation/netmiko-textfsm.html
 
-##Usage
+## Usage
 Run using the following:
 
     python -m networkconfigutility [options\files\filters]
