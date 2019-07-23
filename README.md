@@ -45,6 +45,7 @@ Run using the following:
 
 Example of current capabilities:
 
+
     usage: networkconfigutility [-h] -config path to config file for device(s |
                             -getters GETTERS [GETTERS ...] | -cli command)
                             configuration_file ftype filter
@@ -56,11 +57,28 @@ Example of current capabilities:
 
     optional arguments:
       -h, --help            show this help message and exit
+      
       -config path to config file for device(s)
+      
                             change configuration on a device or groups of devices
+                            
+      -merge path to config file for device(s)
+      
+                        merge a configuration to a device or group of devices
+
+                            
       -getters GETTERS [GETTERS ...]
+      
                             use built-in NAPALM getters to retrieve information
+                            
       -cli command          use the system CLI to retrieve information
+      
+        -getters_extra GETTERS_EXTRA [GETTERS_EXTRA ...]
+        
+                        optional, additional getters to use
+                        
+      -cli_extra command    optional, additional CLI to retrieve information
+
 
 Example execution of the getters looks like such:
 
