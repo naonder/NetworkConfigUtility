@@ -14,7 +14,7 @@ def main():
     group.add_argument('-config', metavar='path to config file for device(s)',
                        help='change configuration on a device or group of devices')
     group.add_argument('-merge', metavar='path to config file for device(s)',
-                       help='replace a configuration to a device or group of devices')
+                       help='merge a configuration to a device or group of devices')
     group.add_argument('-getters', nargs='+', help='use built-in NAPALM getters to retrieve information')
     group.add_argument('-cli', metavar='command', help='use the system CLI to retrieve information')
 
@@ -25,7 +25,7 @@ def main():
 
     # Required arguments - program's config file, filter type and the filter itself
     my_parser.add_argument('configuration_file', help='name of configuration file for program itself')
-    my_parser.add_argument('ftype', help='type of filter to use')
+    my_parser.add_argument('ftype', metavar='ftype', choices=['group', 'name'], help='type of filter to use')
     my_parser.add_argument('filter', help='name of device or group')
 
     args = my_parser.parse_args()
