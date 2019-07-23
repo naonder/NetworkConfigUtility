@@ -12,9 +12,16 @@ def main():
 
     group = my_parser.add_mutually_exclusive_group(required=True)  # Only allow one type to be done at a time
     group.add_argument('-config', metavar='path to config file for device(s)',
-                       help='change configuration on a device or groups of devices')
+                       help='change configuration on a device or group of devices')
+    group.add_argument('-merge', metavar='path to config file for device(s)',
+                       help='replace a configuration to a device or group of devices')
     group.add_argument('-getters', nargs='+', help='use built-in NAPALM getters to retrieve information')
     group.add_argument('-cli', metavar='command', help='use the system CLI to retrieve information')
+
+    # Setup optional, extra arguments for getters or running additional CLI commands
+    group_2 = my_parser.add_mutually_exclusive_group()
+    group_2.add_argument('-getters_extra', nargs='+', help='optional, additional getters to use')
+    group_2.add_argument('-cli_extra', metavar='command', help='optional, additional CLI to retrieve information')
 
     # Required arguments - program's config file, filter type and the filter itself
     my_parser.add_argument('configuration_file', help='name of configuration file for program itself')
@@ -24,8 +31,11 @@ def main():
     args = my_parser.parse_args()
 
     push_config = args.config
+    merge_config = args.merge
     getters = args.getters
     cli = args.cli
+    getters_extra = args.getters_extra
+    cli_extra = args.cli_extra
     nornir_filter = args.filter
     nornir_ftype = args.ftype
 
@@ -49,7 +59,7 @@ def main():
         print('\nPlease specify either name or group for ftype\n')
         sys.exit()
 
-    # Configuration pushing completed here
+    # Configuration pushing completed here using Netmiko
     if push_config:
 
         while True:  # Prompt if wanting to do a dry run first
@@ -62,6 +72,10 @@ def main():
                     push = input('\nPush configuration now to device(s) [y/n]? \n')
                     if push.lower() == 'y':
                         all_tasks.send_config(task, push_config)
+                        if getters_extra:
+                            all_tasks.getters(task, getters_extra)
+                        elif cli_extra:
+                            all_tasks.cli(task, cli_extra)
                         sys.exit()
                     elif push.lower() == 'n':
                         sys.exit()
@@ -69,6 +83,41 @@ def main():
                         print('\nSpecify either "y" or "n"\n')
             elif dry_run.lower() == 'n':
                 all_tasks.send_config(task, push_config)
+                if getters_extra:
+                    all_tasks.getters(task, getters_extra)
+                elif cli_extra:
+                    all_tasks.cli(task, cli_extra)
+                sys.exit()
+            else:
+                print('\nSpecify either "y" or "n"\n')
+
+    # Merge a configuration using NAPALM
+    elif merge_config:
+        while True:  # Prompt if wanting to do a dry run first
+            dry_run = input('\nPerform a dry run [y/n]? \n')
+            if dry_run.lower() == 'y':
+                all_tasks.dry_run(task, merge_config)
+                print('\nDry run completed\n')
+
+                while True:  # Dry run complete, prompt if would like to push configuration to production
+                    push = input('\nPush configuration now to device(s) [y/n]? \n')
+                    if push.lower() == 'y':
+                        all_tasks.merge_config(task, merge_config)
+                        if getters_extra:
+                            all_tasks.getters(task, getters_extra)
+                        elif cli_extra:
+                            all_tasks.cli(task, cli_extra)
+                        sys.exit()
+                    elif push.lower() == 'n':
+                        sys.exit()
+                    else:
+                        print('\nSpecify either "y" or "n"\n')
+            elif dry_run.lower() == 'n':
+                all_tasks.merge_config(task, merge_config)
+                if getters_extra:
+                    all_tasks.getters(task, getters_extra)
+                elif cli_extra:
+                    all_tasks.cli(task, cli_extra)
                 sys.exit()
             else:
                 print('\nSpecify either "y" or "n"\n')

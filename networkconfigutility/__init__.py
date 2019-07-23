@@ -54,6 +54,18 @@ class NornirHandler(object):
         else:
             return print_result(result)
 
+    # Users NAPALM's merge config method
+    def merge_config(self, task, config_filename):
+        result = task.run(task=networking.napalm_configure,
+                          dry_run=False,
+                          filename=config_filename,
+                          replace=False)
+
+        if task.data.failed_hosts:  # Any failed hosts will be returned and printed at the bottom of the result
+            return print_result(result), print(f'\nfailed hosts: {task.data.failed_hosts}')
+        else:
+            return print_result(result)
+
     # Uses built-in NAPALM's getters
     def getters(self, task, getters):
         result = task.run(task=networking.napalm_get,
