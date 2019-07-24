@@ -15,6 +15,8 @@ def main():
                        help='change configuration on a device or group of devices')
     group.add_argument('-merge', metavar='path to config file for device(s)',
                        help='merge a configuration to a device or group of devices')
+    group.add_argument('-replace', metavar='path to config file for device(s)',
+                       help='replace a configuration on a device or group of devices')
     group.add_argument('-getters', nargs='+', help='use built-in NAPALM getters to retrieve information')
     group.add_argument('-cli', metavar='command', help='use the system CLI to retrieve information')
 
@@ -32,6 +34,7 @@ def main():
 
     push_config = args.config
     merge_config = args.merge
+    replace_config = args.replace
     getters = args.getters
     cli = args.cli
     getters_extra = args.getters_extra
@@ -114,6 +117,43 @@ def main():
                         print('\nSpecify either "y" or "n"\n')
             elif dry_run.lower() == 'n':
                 all_tasks.merge_config(task, merge_config)
+                if getters_extra:
+                    all_tasks.getters(task, getters_extra)
+                elif cli_extra:
+                    all_tasks.cli(task, cli_extra)
+                sys.exit()
+            else:
+                print('\nSpecify either "y" or "n"\n')
+
+    # Replace a configuration using NAPALM
+    elif replace_config:
+
+        if nornir_ftype == 'group':
+            print('\n*' * 79)
+            print('WARNING: Filtering method is set to "group". Multiple devices may have their configuration replaced')
+            print('*' * 79)
+
+        while True:  # Prompt if wanting to do a dry run first
+            dry_run = input('\nPerform a dry run [y/n]? \n')
+            if dry_run.lower() == 'y':
+                all_tasks.dry_run_replace(task, replace_config)
+                print('\nDry run completed\n')
+
+                while True:  # Dry run complete, prompt if would like to push configuration to production
+                    push = input('\nPush configuration now to device(s) [y/n]? \n')
+                    if push.lower() == 'y':
+                        all_tasks.replace_config(task, replace_config)
+                        if getters_extra:
+                            all_tasks.getters(task, getters_extra)
+                        elif cli_extra:
+                            all_tasks.cli(task, cli_extra)
+                        sys.exit()
+                    elif push.lower() == 'n':
+                        sys.exit()
+                    else:
+                        print('\nSpecify either "y" or "n"\n')
+            elif dry_run.lower() == 'n':
+                all_tasks.replace_config(task, replace_config)
                 if getters_extra:
                     all_tasks.getters(task, getters_extra)
                 elif cli_extra:

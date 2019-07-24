@@ -9,7 +9,7 @@ def readme_file():
 
 setup(
     name='networkconfigutility',
-    version='1.0.1',
+    version='1.0.4',
     description='Utility for pushing configuration data to network devices and retrieving state data',
     long_description=readme_file(),
     long_description_content_type='text/markdown',

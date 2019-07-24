@@ -44,6 +44,18 @@ class NornirHandler(object):
         else:
             return print_result(result)
 
+    # Use NAPALM's feature to complete a dry run for replace operations
+    def dry_run_replace(self, task, config_filename):
+        result = task.run(task=networking.napalm_configure,
+                          dry_run=True,
+                          filename=config_filename,
+                          replace=True)
+
+        if task.data.failed_hosts:  # Any failed hosts will be returned and printed at the bottom of the result
+            return print_result(result), print(f'\nfailed hosts: {task.data.failed_hosts}')
+        else:
+            return print_result(result)
+
     # Uses Netmiko's config sending from a file to complete change
     def send_config(self, task, config_filename):
         result = task.run(task=networking.netmiko_send_config,
@@ -60,6 +72,18 @@ class NornirHandler(object):
                           dry_run=False,
                           filename=config_filename,
                           replace=False)
+
+        if task.data.failed_hosts:  # Any failed hosts will be returned and printed at the bottom of the result
+            return print_result(result), print(f'\nfailed hosts: {task.data.failed_hosts}')
+        else:
+            return print_result(result)
+
+    # Users NAPALM's replace config method
+    def replace_config(self, task, config_filename):
+        result = task.run(task=networking.napalm_configure,
+                          dry_run=False,
+                          filename=config_filename,
+                          replace=True)
 
         if task.data.failed_hosts:  # Any failed hosts will be returned and printed at the bottom of the result
             return print_result(result), print(f'\nfailed hosts: {task.data.failed_hosts}')
